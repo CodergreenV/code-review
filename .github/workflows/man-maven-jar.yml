@@ -30,8 +30,8 @@ jobs:
 
       # 复制OpenAI自动评审组件jar包到Github服务器的libs目录下
       - name: Copy openai-code-review-sdk JAR
-        run: mvn dependency:copy -Dartifact=org.greenv:green-code-review:1.0-SNAPSHOT -DoutputDirectory=./libs
+        run: mvn dependency:copy -Dartifact=org.greenv:review-sdk:1.0-SNAPSHOT -DoutputDirectory=./libs
 
       # 执行jar包，即执行自动评审功能
       - name: Run Code Review
-        run: java -jar ./libs/green-code-review:1.0-SNAPSHOT.jar
+        run: java -jar ./libs/review-sdk:1.0-SNAPSHOT.jar
