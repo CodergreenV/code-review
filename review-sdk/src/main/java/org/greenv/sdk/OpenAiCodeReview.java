@@ -112,30 +112,37 @@ public class OpenAiCodeReview {
 
 
     private static String writeLog(String token, String log) throws Exception {
+        try {
+            // 克隆仓库
+            Git git = Git.cloneRepository()
+                    .setURI("https://github.com/CodergreenV/review-log.git")
+                    .setDirectory(new File("repo"))
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
+                    .call();
 
-        Git git = Git.cloneRepository()
-                .setURI("https://github.com/CodergreenV/review-log.git")
-                .setDirectory(new File("repo"))
-                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
-                .call();
+            // 创建日期文件夹和文件
+            String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            File dateFolder = new File("repo/" + dateFolderName);
+            if (!dateFolder.exists()) {
+                dateFolder.mkdirs();
+            }
 
-        String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        File dateFolder = new File("repo/" + dateFolderName);
-        if (!dateFolder.exists()) {
-            dateFolder.mkdirs();
+            String fileName = generateRandomString(12) + ".md";
+            File newFile = new File(dateFolder, fileName);
+            try (FileWriter writer = new FileWriter(newFile)) {
+                writer.write(log);
+            }
+
+            // 添加文件、提交和推送
+            git.add().addFilepattern(dateFolderName + "/" + fileName).call();
+            git.commit().setMessage("Add new file").call();
+            git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, "")).call();
+
+            return "https://github.com/CodergreenV/review-log/blob/main/" + dateFolderName + "/" + fileName;
+        } catch (Exception e) {
+            e.printStackTrace(); // 打印异常信息
+            throw e; // 重新抛出异常
         }
-
-        String fileName = generateRandomString(12) + ".md";
-        File newFile = new File(dateFolder, fileName);
-        try (FileWriter writer = new FileWriter(newFile)) {
-            writer.write(log);
-        }
-
-        git.add().addFilepattern(dateFolderName + "/" + fileName).call();
-        git.commit().setMessage("Add new file").call();
-        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""));
-
-        return "https://github.com/CodergreenV/review-log/blob/main/" + dateFolderName + "/" + fileName;
     }
 
     private static String generateRandomString(int length) {
