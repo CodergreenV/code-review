@@ -25,7 +25,7 @@ public class BearerTokenUtils {
             .build();
 
     public static String getToken(String apiKeySecret) {
-        String[] split = apiKeySecret.split("\\\\.");
+        String[] split = apiKeySecret.split("\\.");
         return getToken(split[0], split[1]);
     }
 
