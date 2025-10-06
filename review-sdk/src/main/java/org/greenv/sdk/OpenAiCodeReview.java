@@ -114,7 +114,7 @@ public class OpenAiCodeReview {
     private static String writeLog(String token, String log) throws Exception {
 
         Git git = Git.cloneRepository()
-                .setURI("https://github.com/CodergreenV/review-log")
+                .setURI("https://github.com/CodergreenV/review-log.git")
                 .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
                 .call();
